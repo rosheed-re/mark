@@ -9,7 +9,6 @@ export default function Register() {
     const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '' })
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
-    const [emailSent, setEmailSent] = useState(false)
 
     function handleChange(e) {
         setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
@@ -42,16 +41,15 @@ export default function Register() {
                 password: form.password,
             })
 
-            // Supabase returns a session immediately if email confirmation is OFF.
-            // If email confirmation is ON, session will be null and user must verify first.
-            if (result?.session) {
-                navigate('/dashboard', { replace: true })
-            } else {
-                // Email confirmation is enabled — tell them to check their inbox
-                setEmailSent(true)
-            }
+            // Always go to login after registration (regardless of email confirmation)
+            navigate('/login', {
+                replace: true,
+                state: {
+                    message: 'Account created successfully! Please log in.'
+                }
+            })
+
         } catch (err) {
-            // Map common Supabase error messages to friendlier ones
             const msg = err.message || ''
             if (msg.includes('already registered') || msg.includes('already been registered')) {
                 setError('An account with that email already exists. Try logging in instead.')
@@ -65,39 +63,6 @@ export default function Register() {
         } finally {
             setLoading(false)
         }
-    }
-
-    // Show confirmation notice if email verification is required
-    if (emailSent) {
-        return (
-            <section className="section container auth-page">
-                <div className="auth-card">
-                    <div className="auth-card__header">
-                        <p className="eyebrow">One more step</p>
-                        <h1>Check your email</h1>
-                    </div>
-                    <p style={{ marginBottom: '1rem' }}>
-                        We sent a confirmation link to <strong>{form.email}</strong>.
-                        Click it to activate your account, then come back and log in.
-                    </p>
-                    <p style={{ fontSize: '0.88rem', color: 'var(--brass)' }}>
-                        Didn't get it? Check your spam folder, or{' '}
-                        <button
-                            type="button"
-                            className="auth-link"
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit', padding: 0 }}
-                            onClick={() => setEmailSent(false)}
-                        >
-                            try again
-                        </button>
-                        .
-                    </p>
-                    <Link to="/login" className="btn btn--primary" style={{ marginTop: '1.4rem', display: 'inline-flex' }}>
-                        Go to login
-                    </Link>
-                </div>
-            </section>
-        )
     }
 
     return (
