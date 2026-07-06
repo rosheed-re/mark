@@ -1,56 +1,78 @@
 import { createContext, useContext, useState, useEffect } from 'react'
+import { supabase } from '../lib/supabase.js'
 
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-    const [user, setUser] = useState(() => {
-        // Rehydrate from localStorage so login survives a page refresh
-        try {
-            const stored = localStorage.getItem('truemark_user')
-            return stored ? JSON.parse(stored) : null
-        } catch {
-            return null
-        }
-    })
+    const [user, setUser] = useState(null)
+    const [profile, setProfile] = useState(null)
+    const [loading, setLoading] = useState(true)
 
-    function register({ name, email, password }) {
-        // Frontend-only: store registered users in localStorage
-        const existing = JSON.parse(localStorage.getItem('truemark_users') || '[]')
-        const alreadyExists = existing.find((u) => u.email === email)
-        if (alreadyExists) throw new Error('An account with that email already exists.')
+    useEffect(() => {
+        // Get the session on first load
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setUser(session?.user ?? null)
+            if (session?.user) fetchProfile(session.user.id)
+            else setLoading(false)
+        })
 
-        const newUser = { name, email, password, joinedAt: new Date().toISOString() }
-        localStorage.setItem('truemark_users', JSON.stringify([...existing, newUser]))
+        // Listen for login/logout events
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+            (_event, session) => {
+                setUser(session?.user ?? null)
+                if (session?.user) fetchProfile(session.user.id)
+                else {
+                    setProfile(null)
+                    setLoading(false)
+                }
+            }
+        )
 
-        // Log them in immediately after registering
-        const { password: _, ...safeUser } = newUser
-        setUser(safeUser)
-        localStorage.setItem('truemark_user', JSON.stringify(safeUser))
+        return () => subscription.unsubscribe()
+    }, [])
+
+    async function fetchProfile(userId) {
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', userId)
+            .single()
+
+        if (!error) setProfile(data)
+        setLoading(false)
     }
 
-    function login({ email, password }) {
-        const existing = JSON.parse(localStorage.getItem('truemark_users') || '[]')
-        const found = existing.find((u) => u.email === email && u.password === password)
-        if (!found) throw new Error('Email or password is incorrect.')
-
-        const { password: _, ...safeUser } = found
-        setUser(safeUser)
-        localStorage.setItem('truemark_user', JSON.stringify(safeUser))
+    async function register({ name, email, password }) {
+        const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: { data: { name } },
+        })
+        if (error) throw new Error(error.message)
+        return data
     }
 
-    function logout() {
-        setUser(null)
-        localStorage.removeItem('truemark_user')
+    async function login({ email, password }) {
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        })
+        if (error) throw new Error(error.message)
+        return data
+    }
+
+    async function logout() {
+        const { error } = await supabase.auth.signOut()
+        if (error) throw new Error(error.message)
     }
 
     return (
-        <AuthContext.Provider value={{ user, login, register, logout }}>
+        <AuthContext.Provider value={{ user, profile, loading, login, register, logout }}>
             {children}
         </AuthContext.Provider>
     )
 }
 
-// Convenience hook used in every component that needs auth
 export function useAuth() {
     return useContext(AuthContext)
 }
