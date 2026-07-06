@@ -23,8 +23,13 @@ export default function Navbar() {
     }
 
     const initials = user?.name
-        ? user.name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
-        : null
+        ? user.name
+            .split(' ')
+            .map((n) => n[0])
+            .join('')
+            .toUpperCase()
+            .slice(0, 2)
+        : '??';
 
     return (
         <header className="navbar">
@@ -70,11 +75,13 @@ export default function Navbar() {
                                 to="/dashboard"
                                 onClick={() => setOpen(false)}
                                 className={({ isActive }) =>
-                                    isActive ? 'navbar__link navbar__link--active navbar__dash-link' : 'navbar__link navbar__dash-link'
+                                    isActive
+                                        ? 'navbar__link navbar__link--active navbar__dash-link'
+                                        : 'navbar__link navbar__dash-link'
                                 }
                             >
                                 <span className="navbar__avatar">{initials}</span>
-                                {user.name.split(' ')[0]}
+                                {user.name ? user.name.split(' ')[0] : 'User'}
                             </NavLink>
                             <button type="button" className="btn btn--ghost btn--sm" onClick={handleLogout}>
                                 Log out
