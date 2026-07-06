@@ -21,7 +21,7 @@ export default function Home() {
             <section className="hero">
                 <img
                     className="hero__img"
-                    src="https://picsum.photos/seed/truemark-hero/1920/1080?grayscale"
+                    src="images/home.jpg"
                     alt="Close-up of finished tattoo work at True Mark studio"
                 />
                 <div className="hero__overlay" />
@@ -46,9 +46,9 @@ export default function Home() {
                     professionalism.
                 </p>
                 <div className="work-grid">
-                    <img src="https://picsum.photos/seed/truemark-1/600/750?grayscale" alt="Recent fine line tattoo — placeholder photo" />
-                    <img src="https://picsum.photos/seed/truemark-2/600/750?grayscale" alt="Recent blackwork tattoo — placeholder photo" />
-                    <img src="https://picsum.photos/seed/truemark-3/600/750?grayscale" alt="Studio session in progress — placeholder photo" />
+                    <img src="images/fine.jpg" alt="Recent fine line tattoo — placeholder photo" />
+                    <img src="images/black.jpg" alt="Recent blackwork tattoo — placeholder photo" />
+                    <img src="images/studio.jpg" alt="Studio session in progress — placeholder photo" />
                 </div>
                 <Link to="/portfolio" className="btn btn--ghost">Explore our work</Link>
             </section>
@@ -79,7 +79,7 @@ export default function Home() {
             </section>
 
             <section className="studio-banner">
-                <img src="https://picsum.photos/seed/truemark-banner/1920/700?grayscale" alt="Inside the True Mark studio — placeholder photo" />
+                <img src="images/inside.jpg" alt="Inside the True Mark studio — placeholder photo" />
                 <div className="studio-banner__overlay" />
                 <p className="studio-banner__quote">
                     "A stencil is a promise — we don't rush a line we can't take back."

@@ -10,7 +10,7 @@ export default function Services() {
     return (
         <>
             <section className="page-banner">
-                <img src="https://picsum.photos/seed/truemark-services/1600/500?grayscale" alt="Tattoo equipment at True Mark — placeholder photo" />
+                <img src="images/ink.jpg" alt="Tattoo equipment at True Mark — placeholder photo" />
                 <div className="page-banner__overlay" />
                 <h1 className="page-banner__title">Services & pricing</h1>
             </section>

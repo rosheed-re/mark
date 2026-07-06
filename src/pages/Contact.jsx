@@ -30,7 +30,7 @@ export default function Contact() {
 
                 <img
                     className="contact__photo"
-                    src="https://picsum.photos/seed/truemark-front/700/420?grayscale"
+                    src="images/front.jpg"
                     alt="True Mark studio storefront — placeholder photo"
                 />
 

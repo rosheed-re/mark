@@ -3,13 +3,13 @@ const artists = [
         name: 'Mara Voss',
         role: 'Founder · Fine line & blackwork',
         bio: 'Started tattooing in 2014 after years as an illustrator. Believes a tattoo should look intentional from three feet away and from three inches.',
-        photo: 'https://picsum.photos/seed/truemark-mara/400/500?grayscale',
+        photo: 'images/voss.jpg',
     },
     {
         name: 'Theo Banks',
         role: 'Blackwork & cover-ups',
         bio: 'Specialises in solid black saturation and reworking old tattoos people stopped loving. Books out fastest for cover-up consults.',
-        photo: 'https://picsum.photos/seed/truemark-theo/400/500?grayscale',
+        photo: 'images/bank.jpg',
     },
 ]
 
@@ -28,7 +28,7 @@ export default function About() {
                 </div>
                 <img
                     className="about-intro__img"
-                    src="https://picsum.photos/seed/truemark-studio/700/560?grayscale"
+                    src="images/small.jpg"
                     alt="Inside the True Mark studio — placeholder photo"
                 />
             </section>
