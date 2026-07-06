@@ -17,14 +17,30 @@ export default function Login() {
         setError('')
     }
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault()
         setLoading(true)
+        setError('')
+
         try {
-            login(form)
+            await login({ email: form.email.trim(), password: form.password })
             navigate(from, { replace: true })
         } catch (err) {
-            setError(err.message)
+            const msg = err.message || ''
+            if (
+                msg.includes('Invalid login credentials') ||
+                msg.includes('invalid_credentials')
+            ) {
+                setError('Email or password is incorrect. Please try again.')
+            } else if (msg.includes('Email not confirmed')) {
+                setError(
+                    'Please confirm your email address first. Check your inbox for the link we sent you.'
+                )
+            } else if (msg.includes('too many requests') || msg.includes('rate limit')) {
+                setError('Too many login attempts. Please wait a few minutes and try again.')
+            } else {
+                setError(msg || 'Something went wrong. Please try again.')
+            }
         } finally {
             setLoading(false)
         }
@@ -53,6 +69,7 @@ export default function Login() {
                             value={form.email}
                             onChange={handleChange}
                             autoComplete="email"
+                            placeholder="you@example.com"
                             required
                         />
                     </label>
@@ -65,6 +82,7 @@ export default function Login() {
                             value={form.password}
                             onChange={handleChange}
                             autoComplete="current-password"
+                            placeholder="Your password"
                             required
                         />
                     </label>
@@ -72,6 +90,13 @@ export default function Login() {
                     <button type="submit" className="btn btn--primary" disabled={loading}>
                         {loading ? 'Logging in…' : 'Log in'}
                     </button>
+
+                    <p style={{ fontSize: '0.85rem', textAlign: 'center', color: 'var(--ink-soft)' }}>
+                        New here?{' '}
+                        <Link to="/register" className="auth-link">
+                            Create a free account
+                        </Link>
+                    </p>
                 </form>
             </div>
         </section>
