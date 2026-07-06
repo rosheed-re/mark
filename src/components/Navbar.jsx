@@ -12,7 +12,7 @@ const publicLinks = [
 ]
 
 export default function Navbar() {
-    const { user, logout } = useAuth()
+    const { user, profile, logout } = useAuth()
     const navigate = useNavigate()
     const [open, setOpen] = useState(false)
 
@@ -22,14 +22,17 @@ export default function Navbar() {
         navigate('/')
     }
 
-    const initials = user?.name
-        ? user.name
+    // Use profile first, then fallback to user_metadata
+    const displayName = profile?.name || user?.user_metadata?.name || user?.name || 'User'
+
+    const initials = displayName
+        ? displayName
             .split(' ')
             .map((n) => n[0])
             .join('')
             .toUpperCase()
             .slice(0, 2)
-        : '??';
+        : '??'
 
     return (
         <header className="navbar">
